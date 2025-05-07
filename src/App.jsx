@@ -16,31 +16,17 @@ function App() {
             const chatWindow = document.querySelector('.chat-window');
 
             if (chatWindow) {
-                // Log trạng thái ban đầu
-                const style = window.getComputedStyle(chatWindow);
-                console.log(style.display === 'none' ? 'đang ẩn' : 'đang hiển thị');
-
-                // Tạo MutationObserver để theo dõi thay đổi thuộc tính style
                 const observer = new MutationObserver(() => {
                     const currentDisplay = window.getComputedStyle(chatWindow).display;
-                    const iframeElement = document.querySelector('.iframe-ai-agent');
-                
-                    // if (!iframeElement) return;
-                
+
                     if (currentDisplay === 'none') {
-                        console.log('đang ẩn');
-                        iframeElement.style.height = '10%';
+                        window.parent.postMessage({ type: 'chat-visibility', state: 'hidden' }, '*');
                     } else {
-                        console.log('đang hiển thị');
-                        iframeElement.style.height = '100%';
+                        window.parent.postMessage({ type: 'chat-visibility', state: 'visible' }, '*');
                     }
                 });
-                
 
-                observer.observe(chatWindow, {
-                    attributes: true,
-                    attributeFilter: ['style'],
-                });
+                observer.observe(chatWindow, { attributes: true, attributeFilter: ['style'] });
 
                 return observer;
             } else {
